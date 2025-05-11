@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+* {
+    font-family: "Inter";
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -117,4 +121,25 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: normal;
+    src: url("./assets/fonts/Inter_18pt-Regular.ttf") format("woff2");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: bold;
+    src: url("./assets/fonts/Inter_18pt-Bold.ttf") format("woff2");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    src: url("./assets/fonts/Inter_18pt-Medium.ttf") format("woff2");
 }

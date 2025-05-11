@@ -10,6 +10,7 @@ import { ArrowRight, Download, FileImage, Upload } from "lucide-react";
 import { Separator } from "@radix-ui/react-select";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Badge } from "../ui/badge";
+import Axios from "@/instance/AxiosInstance";
 
 const IMAGE_FORMATS = [
     { value: "png", label: "PNG" },
@@ -37,7 +38,7 @@ const ImgConverter = () => {
             const reader = new FileReader();
             reader.onload = () => {
                 setPreviewUrl(reader.result as string);
-                setConvertedUrl(null); // Reset converted image when new file is selected
+                setConvertedUrl(null);
             };
             reader.readAsDataURL(file);
         }
@@ -72,12 +73,25 @@ const ImgConverter = () => {
 
         setIsConverting(true);
 
-        // Simulate conversion process
-        // In a real app, you would send the file to a server or use a library
-        setTimeout(() => {
-            setConvertedUrl(previewUrl);
+        const formData = new FormData();
+        formData.append("image", selectedFile);
+        formData.append("format", outputFormat);
+
+        try {
+            const response = await Axios.post("convert", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                responseType: "blob",
+            });
+            const blob = response.data;
+            const imageUrl = URL.createObjectURL(blob);
+            setConvertedUrl(imageUrl);
             setIsConverting(false);
-        }, 1500);
+        } catch (error) {
+            console.error("Error converting image:", error);
+            return;
+        }
     };
 
     const handleDownload = () => {
@@ -163,7 +177,7 @@ const ImgConverter = () => {
                                                             <img src={previewUrl || "/placeholder.svg"} alt="Original image" className="object-contain" />
                                                         </div>
                                                         <p className="text-sm text-muted-foreground">
-                                                            {selectedFile?.name} ({Math.round(selectedFile?.size / 1024)} KB)
+                                                            {selectedFile?.name} ({selectedFile && Math.round(selectedFile?.size / 1024)} KB)
                                                         </p>
                                                     </div>
                                                 )}
